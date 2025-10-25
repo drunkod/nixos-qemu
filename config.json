@@ -1,0 +1,8 @@
+{
+  "Program": "node",
+  "Args": ["hi.js"],
+  "Files": ["hi.js"],
+  "RunConfig": {
+    "Ports": ["8083"]
+  }
+}
