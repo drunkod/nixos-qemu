@@ -6,6 +6,7 @@ pkgs.mkShell {
     pkgs.qemu
     pkgs.nodejs
     pkgs.git
+    pkgs.vscode  # Add VSCode to dev shell
   ];
   
   shellHook = ''
@@ -17,23 +18,26 @@ pkgs.mkShell {
     echo "📁 Store: ${customNixStore}"
     echo ""
     echo "🚀 Quick Start:"
-    echo "   1. Terminal 1: ~/nixstatic run .#microvm"
-    echo "   2. Terminal 2: ~/nixstatic run .#vscode"
+    echo "   Terminal 1: ~/nixstatic run .#microvm"
+    echo "   Terminal 2: ~/nixstatic run .#vscode"
     echo ""
-    echo "📋 Commands:"
-    echo "   ~/nixstatic run .#microvm         - Start VM"
-    echo "   ~/nixstatic run .#vscode          - VSCode (waits for exit)"
-    echo "   ~/nixstatic run .#vscode-bg       - VSCode (background)"
-    echo "   ~/nixstatic run .#connect         - SSH shell"
+    echo "📋 VSCode Options:"
+    echo "   ~/nixstatic run .#vscode         - ⚡ Host (FAST!)"
+    echo "   ~/nixstatic run .#vscode-host    - ⚡ Host (explicit)"
+    echo "   ~/nixstatic run .#vscode-vm      - 🐢 VM via X11 (slow)"
     echo ""
-    echo "🐛 Debug:"
-    echo "   ~/nixstatic run .#test-x11        - Test X11"
-    echo "   ~/nixstatic run .#test-vscode     - Test installation"
-    echo "   ~/nixstatic run .#vscode-debug    - Verbose launch"
+    echo "📋 VM Access:"
+    echo "   ~/nixstatic run .#terminal       - Quick terminal"
+    echo "   ~/nixstatic run .#connect        - SSH with X11"
     echo ""
-    echo "💡 How it works:"
-    echo "   - VSCode runs in VM, displays on your screen"
-    echo "   - SSH tunnel must stay open for X11"
-    echo "   - Close VSCode to end the session"
+    echo "🧪 Testing:"
+    echo "   ~/nixstatic run .#test-network   - Test internet"
+    echo "   ~/nixstatic run .#test-x11       - Test X11"
+    echo "   ~/nixstatic run .#test-vscode    - Test VSCode in VM"
+    echo ""
+    echo "💡 Recommended workflow:"
+    echo "   - Edit: VSCode on host (fast!)"
+    echo "   - Run:  Terminal in VM"
+    echo "   - Files auto-shared via /workspace"
   '';
 }

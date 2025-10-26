@@ -6,6 +6,37 @@
     program = "${self.nixosConfigurations.my-microvm.config.microvm.declaredRunner}/bin/microvm-run";
   };
 
+  # ✨ NEW: VSCode on HOST (FAST!)
+  vscode-host = {
+    type = "app";
+    program = toString (pkgs.writeShellScript "vscode-host" ''
+      echo "🚀 Launching VSCode on HOST (fast!)..."
+      echo ""
+      echo "📁 Workspace: $(pwd)"
+      echo "   Shared with VM at: /workspace"
+      echo ""
+      
+      # Launch VSCode natively on host
+      ${pkgs.vscode}/bin/code . "$@"
+    '');
+  };
+
+  # Quick terminal access to VM
+  terminal = {
+    type = "app";
+    program = toString (pkgs.writeShellScript "vm-terminal" ''
+      echo "🔌 Connecting to VM terminal..."
+      echo "   Password: dev"
+      echo ""
+      
+      exec ${pkgs.openssh}/bin/ssh \
+        -o "StrictHostKeyChecking=no" \
+        -o "UserKnownHostsFile=/dev/null" \
+        -o "LogLevel=ERROR" \
+        -t dev@localhost -p 2222
+    '');
+  };
+
   connect = {
     type = "app";
     program = toString (pkgs.writeShellScript "connect-vm" ''
@@ -49,19 +80,19 @@
     '');
   };
 
-  # Launch VSCode as dev user - FIXED VERSION
-  vscode = {
+  # VSCode in VM via X11 (SLOW - for testing only)
+  vscode-vm = {
     type = "app";
-    program = toString (pkgs.writeShellScript "launch-vscode" ''
-      echo "🚀 Launching VSCode as 'dev' user..."
+    program = toString (pkgs.writeShellScript "launch-vscode-vm" ''
+      echo "🐢 Launching VSCode IN VM (via X11 - slow)..."
       echo ""
-      echo "💡 VSCode will open in a new window"
-      echo "   Close VSCode to end the session"
+      echo "💡 For better performance, use: ~/nixstatic run .#vscode-host"
+      echo ""
+      echo "Close VSCode to end the session"
       echo ""
       
       xhost +local: 2>/dev/null || true
       
-      # Use --wait to keep SSH connection alive
       ${pkgs.openssh}/bin/ssh \
         -o "StrictHostKeyChecking=no" \
         -o "UserKnownHostsFile=/dev/null" \
@@ -77,41 +108,26 @@
     '');
   };
 
-  # Alternative: Launch VSCode in background (keeps SSH open)
-  vscode-bg = {
+  # Alias: default vscode = host (fast)
+  vscode = {
     type = "app";
-    program = toString (pkgs.writeShellScript "launch-vscode-bg" ''
-      echo "🚀 Launching VSCode in background..."
+    program = toString (pkgs.writeShellScript "vscode-default" ''
+      echo "🚀 Launching VSCode on HOST (fast!)..."
       echo ""
-      echo "💡 Press Ctrl+C to close the SSH tunnel"
-      echo "   (VSCode will close when you do this)"
+      echo "📁 Workspace: $(pwd)"
+      echo "   Files shared with VM at: /workspace"
+      echo ""
+      echo "💡 To use VSCode in VM: ~/nixstatic run .#vscode-vm"
       echo ""
       
-      xhost +local: 2>/dev/null || true
-      
-      # Launch VSCode and keep SSH alive
-      ${pkgs.openssh}/bin/ssh \
-        -o "StrictHostKeyChecking=no" \
-        -o "UserKnownHostsFile=/dev/null" \
-        -o "LogLevel=ERROR" \
-        -X \
-        -o "ForwardX11Trusted=yes" \
-        -o "ForwardX11Timeout=596h" \
-        dev@localhost -p 2222 \
-        'code /workspace; echo "VSCode launched. Press Ctrl+C to exit..."; sleep infinity'
-      
-      echo ""
-      echo "✅ SSH session closed"
+      ${pkgs.vscode}/bin/code . "$@"
     '');
   };
 
-  # Launch VSCode as root
   vscode-root = {
     type = "app";
     program = toString (pkgs.writeShellScript "launch-vscode-root" ''
       echo "🚀 Launching VSCode as root..."
-      echo ""
-      echo "💡 Close VSCode to end the session"
       echo ""
       
       xhost +local: 2>/dev/null || true
@@ -131,7 +147,6 @@
     '');
   };
 
-  # Test X11
   test-x11 = {
     type = "app";
     program = toString (pkgs.writeShellScript "test-x11" ''
@@ -166,7 +181,6 @@
     '');
   };
 
-  # Simple test to check VSCode installation
   test-vscode = {
     type = "app";
     program = toString (pkgs.writeShellScript "test-vscode" ''
@@ -189,95 +203,42 @@
             echo \"  ❌ code NOT found\"
           fi
         "'
-      
-      echo ""
-      echo "📋 Checking as root user:"
-      ${pkgs.openssh}/bin/ssh \
-        -o "StrictHostKeyChecking=no" \
-        -o "UserKnownHostsFile=/dev/null" \
-        -o "LogLevel=ERROR" \
-        root@localhost -p 2222 \
-        'bash -c "
-          echo \"  PATH: \$PATH\"
-          echo \"\"
-          if command -v code &> /dev/null; then
-            echo \"  ✅ code found: \$(which code)\"
-            echo \"  Version: \$(code --version 2>&1 | head -1)\"
-          else
-            echo \"  ❌ code NOT found\"
-          fi
-        "'
     '');
   };
 
-  # Debug version with verbose output
-  vscode-debug = {
+  test-network = {
     type = "app";
-    program = toString (pkgs.writeShellScript "launch-vscode-debug" ''
-      echo "🐛 DEBUG: Launching VSCode with full verbosity..."
-      echo ""
+    program = toString (pkgs.writeShellScript "test-network" ''
+      echo "🔍 Testing VM Network..."
       
-      xhost +local: 2>/dev/null || true
-      
-      echo "📋 Host environment:"
-      echo "  DISPLAY: $DISPLAY"
-      echo "  USER: $USER"
-      echo ""
-      
-      echo "📋 Testing SSH connection..."
       ${pkgs.openssh}/bin/ssh \
         -o "StrictHostKeyChecking=no" \
         -o "UserKnownHostsFile=/dev/null" \
         -o "LogLevel=ERROR" \
         dev@localhost -p 2222 \
-        'echo "✅ SSH connection OK"' || {
-          echo "❌ SSH connection failed!"
-          exit 1
-        }
-      
-      echo ""
-      echo "📋 Testing X11 forwarding..."
-      ${pkgs.openssh}/bin/ssh \
-        -X \
-        -o "StrictHostKeyChecking=no" \
-        -o "UserKnownHostsFile=/dev/null" \
-        -o "LogLevel=ERROR" \
-        -o "ForwardX11Trusted=yes" \
-        dev@localhost -p 2222 \
-        'echo "  DISPLAY: $DISPLAY"' || {
-          echo "❌ X11 forwarding failed!"
-          exit 1
-        }
-      
-      echo ""
-      echo "📋 Checking code binary in VM..."
-      ${pkgs.openssh}/bin/ssh \
-        -o "StrictHostKeyChecking=no" \
-        -o "UserKnownHostsFile=/dev/null" \
-        -o "LogLevel=ERROR" \
-        dev@localhost -p 2222 \
-        'ls -lh $(which code) 2>&1' || {
-          echo "❌ code binary not found!"
-          exit 1
-        }
-      
-      echo ""
-      echo "📋 Launching VSCode (keeping SSH open)..."
-      ${pkgs.openssh}/bin/ssh \
-        -o "StrictHostKeyChecking=no" \
-        -o "UserKnownHostsFile=/dev/null" \
-        -o "LogLevel=ERROR" \
-        -X \
-        -o "ForwardX11Trusted=yes" \
-        -o "ForwardX11Timeout=596h" \
-        dev@localhost -p 2222 \
-        'bash -lc "
-          echo \"Starting VSCode...\"
-          code --verbose --wait /workspace 2>&1
+        'bash -c "
+          echo \"📡 Network interfaces:\"
+          ip addr show | grep -E \"^[0-9]+:|inet \"
+          echo \"\"
+          
+          echo \"🛣️  Routes:\"
+          ip route
+          echo \"\"
+          
+          echo \"🔍 DNS config:\"
+          cat /etc/resolv.conf
+          echo \"\"
+          
+          echo \"🧪 Tests:\"
+          echo -n \"  Ping 8.8.8.8: \"
+          ping -c 1 -W 2 8.8.8.8 &>/dev/null && echo \"✅\" || echo \"❌\"
+          
+          echo -n \"  Ping google.com: \"
+          ping -c 1 -W 2 google.com &>/dev/null && echo \"✅\" || echo \"❌\"
+          
+          echo -n \"  Curl google.com: \"
+          curl -s -m 5 https://google.com &>/dev/null && echo \"✅\" || echo \"❌\"
         "'
-      
-      echo ""
-      echo "✅ VSCode session ended (exit code: $?)"
     '');
   };
 }

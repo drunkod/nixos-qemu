@@ -1,20 +1,36 @@
 { config, lib, pkgs, ... }:
 
 {
-networking = {
-hostName = "nixos-dev";
-firewall = {
-enable = true;
-allowedTCPPorts = [ 22 8083 3000 ];
-};
-};
+  networking = {
+    hostName = "nixos-dev";
+    
+    # Use DHCP for automatic configuration
+    useDHCP = lib.mkDefault true;
+    
+    # Fallback DNS servers (Google and Cloudflare)
+    nameservers = [ "8.8.8.8" "8.8.4.4" "1.1.1.1" ];
+    
+    firewall = {
+      enable = true;
+      allowedTCPPorts = [ 22 8083 3000 ];
+      # Allow all outbound connections
+      checkReversePath = false;
+    };
+  };
 
-services.openssh = {
-enable = true;
-settings = {
-PermitRootLogin = "yes";
-X11Forwarding = true;
-X11UseLocalhost = true;
-};
-};
+  services.openssh = {
+    enable = true;
+    settings = {
+      PermitRootLogin = "yes";
+      X11Forwarding = true;
+      X11UseLocalhost = true;
+    };
+  };
+
+  # Enable systemd-resolved for DNS
+  services.resolved = {
+    enable = true;
+    dnssec = "false";
+    fallbackDns = [ "8.8.8.8" "8.8.4.4" "1.1.1.1" ];
+  };
 }
