@@ -1,0 +1,19 @@
+# MicroVM runtime
+*.socket
+/tmp/
+
+# Ops/Nanos
+.ops/
+*.img
+
+# Node.js
+node_modules/
+
+# Editor
+.vscode/
+*.swp
+*~
+
+# Build artifacts
+result
+result-*
