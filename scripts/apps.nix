@@ -17,7 +17,7 @@
       echo ""
       
       # Launch VSCode natively on host
-      ${pkgs.vscode}/bin/code . "$@"
+      ${pkgs.vscode}/bin/code --new-window --no-sandbox "$@"
     '');
   };
 
@@ -119,8 +119,9 @@
       echo ""
       echo "💡 To use VSCode in VM: ~/nixstatic run .#vscode-vm"
       echo ""
-      
-      ${pkgs.vscode}/bin/code . "$@"
+      # Add Git to PATH so VSCode can find it
+        export PATH="${pkgs.git}/bin:$PATH"
+      ${pkgs.vscode}/bin/code --new-window --no-sandbox "$@"
     '');
   };
 

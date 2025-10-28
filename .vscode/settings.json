@@ -1,0 +1,53 @@
+{
+  // Terminal configuration
+  "terminal.integrated.profiles.linux": {
+    "Local Bash": {
+      "path": "/bin/bash",
+      "icon": "terminal-bash",
+      "color": "terminal.ansiGreen"
+    },
+    "VM (dev)": {
+      "path": "/bin/bash",
+      "args": [
+        "-c",
+        "ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o LogLevel=ERROR -t dev@localhost -p 2222 || read -p 'Press Enter to close...'"
+      ],
+      "icon": "vm",
+      "color": "terminal.ansiBlue"
+    },
+    "VM (root)": {
+      "path": "/bin/bash",
+      "args": [
+        "-c",
+        "ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o LogLevel=ERROR -t root@localhost -p 2222 || read -p 'Press Enter to close...'"
+      ],
+      "icon": "shield",
+      "color": "terminal.ansiRed"
+    }
+  },
+  
+  // Default profile
+  "terminal.integrated.defaultProfile.linux": "Local Bash",
+  
+  // Auto-create terminals on startup
+  "terminal.integrated.automationProfile.linux": {
+    "path": "/bin/bash"
+  },
+  
+  // Font settings (from our earlier config)
+  "editor.fontFamily": "'JetBrains Mono', 'Fira Code', monospace",
+  "editor.fontSize": 14,
+  "editor.fontLigatures": true,
+  "terminal.integrated.fontFamily": "'JetBrains Mono', monospace",
+  "terminal.integrated.fontSize": 13,
+  "terminal.integrated.lineHeight": 1.2,
+  
+  // Workspace specific
+  "files.watcherExclude": {
+    "**/.git/objects/**": true,
+    "**/.git/subtree-cache/**": true,
+    "**/node_modules/**": true,
+    "**/.ops/**": true,
+    "**/*.socket": true
+  }
+}

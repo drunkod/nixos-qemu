@@ -1,0 +1,52 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Connect to VM (dev)",
+      "type": "shell",
+      "command": "ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o LogLevel=ERROR -t dev@localhost -p 2222",
+      "problemMatcher": [],
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "dedicated",
+        "showReuseMessage": false,
+        "clear": false
+      },
+      "isBackground": false
+    },
+    {
+      "label": "Start MicroVM",
+      "type": "shell",
+      "command": "~/nixstatic",
+      "args": ["run", ".#microvm"],
+      "problemMatcher": [],
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "new",
+        "showReuseMessage": false
+      },
+      "isBackground": true,
+      "runOptions": {
+        "runOn": "folderOpen"
+      }
+    },
+    {
+      "label": "Test VM Network",
+      "type": "shell",
+      "command": "~/nixstatic run .#test-network",
+      "problemMatcher": []
+    },
+    {
+      "label": "Open Local Terminal + VM Terminal",
+      "dependsOn": [
+        "Open Local Terminal",
+        "Open VM Terminal"
+      ],
+      "problemMatcher": []
+    }
+  ]
+}

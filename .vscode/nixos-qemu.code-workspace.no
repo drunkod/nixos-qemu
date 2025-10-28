@@ -1,0 +1,41 @@
+{
+  "folders": [
+    {
+      "path": ".."
+    }
+  ],
+  "settings": {
+    "terminal.integrated.profiles.linux": {
+      "Local Bash": {
+        "path": "/bin/bash",
+        "icon": "terminal-bash",
+        "color": "terminal.ansiGreen"
+      },
+      "VM (dev)": {
+        "path": "/bin/bash",
+        "args": [
+          "-c",
+          "echo '�� Connecting to VM as dev user...'; echo 'Password: dev'; echo ''; ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o LogLevel=ERROR -t dev@localhost -p 2222"
+        ],
+        "icon": "vm",
+        "color": "terminal.ansiBlue"
+      },
+      "VM (root)": {
+        "path": "/bin/bash",
+        "args": [
+          "-c",
+          "echo '🔌 Connecting to VM as root...'; echo 'Password: root'; echo ''; ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o LogLevel=ERROR -t root@localhost -p 2222"
+        ],
+        "icon": "shield",
+        "color": "terminal.ansiRed"
+      }
+    }
+  },
+  "extensions": {
+    "recommendations": [
+      "bbenoist.nix",
+      "jnoortheen.nix-ide",
+      "arrterian.nix-env-selector"
+    ]
+  }
+}

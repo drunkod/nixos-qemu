@@ -10,10 +10,19 @@
 node_modules/
 
 # Editor
-.vscode/
+# .vscode/
+.vscode/*.log
 *.swp
 *~
 
 # Build artifacts
 result
 result-*
+
+# User projects (don't commit to microvm repo)
+/projects/*
+/learning/*
+
+# But allow example projects
+!/projects/.gitkeep
+!/learning/.gitkeep
