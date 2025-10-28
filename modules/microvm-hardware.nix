@@ -31,13 +31,13 @@
         proto = "9p";
         securityModel = "none";
       }
-      {
-        source = workspaceSource;
-        mountPoint = "/workspace";
-        tag = "workspace";
-        proto = "9p";
-        securityModel = "none";
-      }
+  {
+    source = workspaceSource;
+    mountPoint = "/workspace";
+    tag = "workspace";
+    proto = "9p";
+    securityModel = "none";
+  }
     ];
   };
 

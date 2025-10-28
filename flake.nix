@@ -12,7 +12,7 @@ outputs = { self, nixpkgs, flake-utils, microvm }:
 let
 # Configuration constants
 customNixStore = "/home/reader/mynixroot/nix/store";
-workspaceSource = toString ./.;
+workspaceSource = "/home/reader/develop/nixos-qemu";
 
 # Module arguments
 moduleArgs = {
@@ -31,6 +31,7 @@ microvm.nixosModules.microvm
 ./modules/users.nix
 ./modules/development.nix
 ./modules/shell-init.nix
+./modules/nix-config.nix
 ];
 };
 } // flake-utils.lib.eachDefaultSystem (system:

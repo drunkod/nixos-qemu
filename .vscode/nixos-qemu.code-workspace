@@ -1,7 +1,12 @@
 {
   "folders": [
     {
-      "path": ".."
+      "name": "🔧 MicroVM Config",
+      "path": "../."
+    },
+    {
+      "name": "📁 Projects",
+      "path": ".././projects"
     }
   ],
   "settings": {
@@ -31,6 +36,14 @@
       }
     }
   },
+    // Git settings
+    "git.autofetch": true,
+    "git.confirmSync": false,
+    
+    // Working directory for integrated terminal
+    "terminal.integrated.cwd": "${workspaceFolder:📁 Projects}"
+
+
   "extensions": {
     "recommendations": [
       "bbenoist.nix",
