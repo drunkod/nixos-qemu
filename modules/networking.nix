@@ -3,6 +3,11 @@
 {
   networking = {
     hostName = "nixos-dev";
+
+    proxy = {
+      default = "http://192.168.0.10:3128";
+      noProxy = "*.localhost,127.0.0.1,::1,192.168.0.0/24,*.chelib.local,*.chelib.ru";
+    };    
     
     # Use DHCP for automatic configuration
     useDHCP = lib.mkDefault true;

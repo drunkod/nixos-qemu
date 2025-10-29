@@ -2,9 +2,7 @@
 
 {
 nix = {
-package = pkgs.nixFlakes;
-
-text
+package = pkgs.nixVersions.stable;
 
 extraOptions = ''
   experimental-features = nix-command flakes
@@ -19,7 +17,7 @@ settings = {
   cores = 0;
   
   # Optional: Save disk space
-  auto-optimise-store = true;
+  # auto-optimise-store = true;
 };
 
 };
