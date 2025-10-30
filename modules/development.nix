@@ -5,7 +5,8 @@ programs.git = {
 enable = true;
 config = {
 init.defaultBranch = "main";
-safe.directory = "/workspace";
+# safe.directory = "/workspace";
+safe.directory = "*";
 };
 };
 

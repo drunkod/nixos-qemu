@@ -50,8 +50,10 @@
         source = workspaceSource;
         mountPoint = "/workspace";
         tag = "workspace";
-        proto = "9p";
-        securityModel = "none";
+        # proto = "9p";
+        proto = "virtiofs";  # ← CHANGED from "9p"
+        # securityModel = "none";
+        socket = "/tmp/microvm-virtiofsd-workspace.sock";
       }
     ];
   };
