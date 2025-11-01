@@ -28,6 +28,7 @@ modules = [
 microvm.nixosModules.microvm
 ./modules/microvm-hardware.nix
 ./modules/networking.nix
+# ./modules/networking-profiles.nix
 ./modules/users.nix
 ./modules/development.nix
 ./modules/shell-init.nix

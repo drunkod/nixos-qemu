@@ -6,39 +6,42 @@ let
   proxyPort = "3128";
   proxyUrl = "http://${proxyHost}:${proxyPort}";
   
-  # Auto-detect script
+  # Auto-detect script - prints commands to eval
   detectProxy = pkgs.writeShellScriptBin "detect-proxy" ''
     # Check if proxy is reachable
     if ${pkgs.netcat}/bin/nc -z -w2 ${proxyHost} ${proxyPort} 2>/dev/null; then
-      echo "🔌 Corporate proxy detected: ${proxyUrl}"
-      export http_proxy="${proxyUrl}"
-      export https_proxy="${proxyUrl}"
-      export HTTP_PROXY="${proxyUrl}"
-      export HTTPS_PROXY="${proxyUrl}"
-      export no_proxy="localhost,127.0.0.1,::1,192.168.0.0/24,*.chelib.local,*.chelib.ru"
-      export NO_PROXY="$no_proxy"
+      echo "🔌 Corporate proxy detected: ${proxyUrl}" >&2
+      echo "export http_proxy='${proxyUrl}'"
+      echo "export https_proxy='${proxyUrl}'"
+      echo "export HTTP_PROXY='${proxyUrl}'"
+      echo "export HTTPS_PROXY='${proxyUrl}'"
+      echo "export no_proxy='localhost,127.0.0.1,::1,192.168.0.0/24,*.chelib.local,*.chelib.ru'"
+      echo "export NO_PROXY='localhost,127.0.0.1,::1,192.168.0.0/24,*.chelib.local,*.chelib.ru'"
     else
-      echo "📱 Direct connection (phone hotspot?)"
-      unset http_proxy https_proxy HTTP_PROXY HTTPS_PROXY
+      echo "📱 Direct connection (phone hotspot?)" >&2
+      echo "unset http_proxy https_proxy HTTP_PROXY HTTPS_PROXY no_proxy NO_PROXY"
     fi
   '';
 
-  # Manual proxy enable/disable scripts
+  # Manual proxy enable - prints commands to eval
   enableProxy = pkgs.writeShellScriptBin "enable-proxy" ''
-    export http_proxy="${proxyUrl}"
-    export https_proxy="${proxyUrl}"
-    export HTTP_PROXY="${proxyUrl}"
-    export HTTPS_PROXY="${proxyUrl}"
-    export no_proxy="localhost,127.0.0.1,::1,192.168.0.0/24,*.chelib.local,*.chelib.ru"
-    export NO_PROXY="$no_proxy"
-    echo "✅ Proxy enabled: ${proxyUrl}"
-    echo "Test: curl -I https://google.com"
+    echo "✅ Proxy enabled: ${proxyUrl}" >&2
+    echo "💡 Test with: curl -I https://google.com" >&2
+    echo ""
+    echo "export http_proxy='${proxyUrl}'"
+    echo "export https_proxy='${proxyUrl}'"
+    echo "export HTTP_PROXY='${proxyUrl}'"
+    echo "export HTTPS_PROXY='${proxyUrl}'"
+    echo "export no_proxy='localhost,127.0.0.1,::1,192.168.0.0/24,*.chelib.local,*.chelib.ru'"
+    echo "export NO_PROXY='localhost,127.0.0.1,::1,192.168.0.0/24,*.chelib.local,*.chelib.ru'"
   '';
 
+  # Manual proxy disable - prints commands to eval
   disableProxy = pkgs.writeShellScriptBin "disable-proxy" ''
-    unset http_proxy https_proxy HTTP_PROXY HTTPS_PROXY no_proxy NO_PROXY
-    echo "✅ Proxy disabled - using direct connection"
-    echo "Test: curl -I https://google.com"
+    echo "✅ Proxy disabled - using direct connection" >&2
+    echo "💡 Test with: curl -I https://google.com" >&2
+    echo ""
+    echo "unset http_proxy https_proxy HTTP_PROXY HTTPS_PROXY no_proxy NO_PROXY"
   '';
 
 in {
@@ -48,30 +51,4 @@ in {
     enableProxy 
     disableProxy
   ];
-
-  # Auto-detect proxy on shell start
-  environment.interactiveShellInit = ''
-    # Auto-detect and configure proxy
-    if ${pkgs.netcat}/bin/nc -z -w2 ${proxyHost} ${proxyPort} 2>/dev/null; then
-      export http_proxy="${proxyUrl}"
-      export https_proxy="${proxyUrl}"
-      export HTTP_PROXY="${proxyUrl}"
-      export HTTPS_PROXY="${proxyUrl}"
-      export no_proxy="localhost,127.0.0.1,::1,192.168.0.0/24,*.chelib.local,*.chelib.ru"
-      export NO_PROXY="$no_proxy"
-    fi
-  '';
-
-  # Configure Nix to use proxy (conditional)
-  nix.settings = {
-    # These will be ignored if not set
-    http-proxy = lib.mkDefault null;
-    https-proxy = lib.mkDefault null;
-  };
-
-  # System-wide proxy for services (conditional)
-  networking.proxy = lib.mkIf (builtins.pathExists "/etc/use-proxy") {
-    default = proxyUrl;
-    noProxy = "localhost,127.0.0.1,::1,192.168.0.0/24,*.chelib.local,*.chelib.ru";
-  };
 }
