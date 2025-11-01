@@ -6,6 +6,39 @@
     program = "${self.nixosConfigurations.my-microvm.config.microvm.declaredRunner}/bin/microvm-run";
   };
 
+  # ✨ NEW: Chromium on HOST (FAST!)
+  chromium-host = {
+    type = "app";
+    program = toString (pkgs.writeShellScript "chromium-host" ''
+      echo "🚀 Launching Chromium on HOST (fast!)..."
+      echo ""
+      echo "🌐 Browser running natively on host"
+      echo "   Can access VM services at localhost:PORT"
+      echo ""
+      
+      # Launch Chromium natively on host
+      ${pkgs.chromium}/bin/chromium --new-window --no-sandbox "$@"
+    '');
+  };
+
+  # Alias: default chromium = host (fast)
+  chromium = {
+    type = "app";
+    program = toString (pkgs.writeShellScript "chromium-default" ''
+      echo "🚀 Launching Chromium on HOST (fast!)..."
+      echo ""
+      echo "🌐 Access VM services:"
+      echo "   localhost:3000  - Dev server"
+      echo "   localhost:5173  - Vite"
+      echo "   localhost:8080  - HTTP server"
+      echo "   localhost:8083  - Custom port"
+      echo ""
+      
+      ${pkgs.chromium}/bin/chromium --new-window --no-sandbox "$@"
+    '');
+  };
+
+
   # ✨ NEW: VSCode on HOST (FAST!)
   vscode-host = {
     type = "app";

@@ -7,6 +7,7 @@ pkgs.mkShell {
     pkgs.nodejs
     pkgs.git
     pkgs.vscode  # Add VSCode to dev shell
+    pkgs.chromium
   ];
   
   shellHook = ''
