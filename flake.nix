@@ -2,7 +2,7 @@
 description = "NixOS MicroVM with VSCode + X11";
 
 inputs = {
-nixpkgs.url = "github:NixOS/nixpkgs/7df7ff7d8e00218376575f0acdcc5d66741351ee";
+nixpkgs.url = "github:NixOS/nixpkgs/3de8f8d73e35724bf9abef41f1bdbedda1e14a31";
 flake-utils.url = "github:numtide/flake-utils";
 microvm.url = "github:astro/microvm.nix";
 microvm.inputs.nixpkgs.follows = "nixpkgs";

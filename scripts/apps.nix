@@ -38,7 +38,22 @@
     '');
   };
 
-
+  # Alias: default ungoogled-chromium = host (fast)
+  ungoogled-chromium = {
+    type = "app";
+    program = toString (pkgs.writeShellScript "chromium-default" ''
+      echo "🚀 Launching Chromium on HOST (fast!)..."
+      echo ""
+      echo "🌐 Access VM services:"
+      echo "   localhost:3000  - Dev server"
+      echo "   localhost:5173  - Vite"
+      echo "   localhost:8080  - HTTP server"
+      echo "   localhost:8083  - Custom port"
+      echo ""
+      
+      ${pkgs.ungoogled-chromium}/bin/chromium --new-window --no-sandbox "$@"
+    '');
+  };
   # ✨ NEW: VSCode on HOST (FAST!)
   vscode-host = {
     type = "app";
