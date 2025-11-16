@@ -4,6 +4,12 @@
 ```bash
 cd ~/develop/nixos-qemu
 
+
+systemctl --user start microvm-virtiofsd-workspace.service
+systemctl --user status microvm-virtiofsd-workspace.service
+systemctl --user stop microvm-virtiofsd-workspace.service
+
+
 # Terminal 1: Start VM
 ~/nixstatic run .#microvm
 
